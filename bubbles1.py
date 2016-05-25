@@ -7,7 +7,8 @@ BG_COLOR = (150, 150, 200)
 BUBBLE_COLOR = (50, 50, 255)
 BUBBLE_RADIUS = 90
 BUBBLE_WIDTH = 2
-CHILD_NUMBERS = [6, 10, 15, 30]
+MIN_CHILDREN = 10
+MAX_CHILDREN = 30
 
 INITIAL_SPEED = 5
 OUTWARD_DECELERATION = .05
@@ -30,7 +31,7 @@ class Bubble():
     
     def draw(self, surface):
         if self.radius > 0:
-            pygame.draw.circle(surface, self.color, (self.x, self.y), self.radius, self.width) 
+            pygame.draw.circle(surface, self.color, (self.x, self.y), int(self.radius), self.width) 
     
     def pop(self):
         if self.popped:
@@ -38,10 +39,10 @@ class Bubble():
         else:
             self.popped = True
             children = []
-            number_of_children = r.choice(CHILD_NUMBERS)
+            number_of_children = r.randint(MIN_CHILDREN, MAX_CHILDREN + 1)
             for i in range(number_of_children):
-                child_radius = self.radius // number_of_children
-                child_direction = 360 // number_of_children * i
+                child_radius = self.radius / number_of_children
+                child_direction = 360 / number_of_children * i
                 child = ChildBubble(self.x, self.y, child_radius, child_direction)
                 children.append(child)
             self.radius = 0
@@ -90,7 +91,7 @@ class ChildBubble():
     
     def draw(self, surface):
         if not self.home:
-            pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius, self.width)
+            pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), int(self.radius), self.width)
         
         
         
