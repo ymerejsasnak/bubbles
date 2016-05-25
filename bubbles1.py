@@ -7,8 +7,11 @@ BG_COLOR = (150, 150, 200)
 BUBBLE_COLOR = (50, 50, 255)
 BUBBLE_RADIUS = 90
 BUBBLE_WIDTH = 2
-MIN_CHILDREN = 10
-MAX_CHILDREN = 30
+CHILD_NUMBERS = [6, 10, 10, 10, 15, 15, 15, 30]
+
+INITIAL_SPEED = 5
+OUTWARD_DECELERATION = .05
+INWARD_ACCELERATION = .05
 
 
 class Bubble():
@@ -35,7 +38,7 @@ class Bubble():
         else:
             self.popped = True
             children = []
-            number_of_children = r.randint(MIN_CHILDREN, MAX_CHILDREN)
+            number_of_children = r.choice(CHILD_NUMBERS)
             for i in range(number_of_children):
                 child_radius = self.radius // number_of_children
                 child_direction = 360 // number_of_children * i
@@ -54,7 +57,7 @@ class ChildBubble():
         self.x = x
         self.y = y
         
-        self.speed = 10
+        self.speed = INITIAL_SPEED
         self.direction = direction
         
         self.moving_outward = True
@@ -65,14 +68,14 @@ class ChildBubble():
             self.x += math.cos(self.direction * (math.pi / 180)) * self.speed
             self.y += math.sin(self.direction * (math.pi / 180)) * self.speed
         
-            self.speed -= .1
+            self.speed -= OUTWARD_DECELERATION
             if self.speed <= 0:
                 self.moving_outward = False
         
         elif not self.moving_outward:
             target_x, target_y = pygame.mouse.get_pos()
             self.direction = math.atan2(target_y - self.y, target_x - self.x) * (180 / math.pi)
-            self.speed += .1
+            self.speed += INWARD_ACCELERATION
             
             self.x += math.cos(self.direction * (math.pi / 180)) * self.speed
             self.y += math.sin(self.direction * (math.pi / 180)) * self.speed
@@ -87,7 +90,6 @@ class ChildBubble():
     
     def draw(self, surface):
         if not self.home:
-            print(self.width, self.radius)
             pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius, self.width)
         
         
@@ -100,7 +102,7 @@ def run_game():
     screen = pygame.display.set_mode((1200, 800))
     pygame.display.set_caption('Bubbles 1')
     
-    pygame.mouse.set_visible(False)
+    #pygame.mouse.set_visible(False)
     
     bubble = Bubble()
     children = []
