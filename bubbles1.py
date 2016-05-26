@@ -8,9 +8,9 @@ import random as r
 BG_COLOR = (150, 150, 200)
 BUBBLE_COLOR = (50, 50, 255)
 BUBBLE_RADIUS = 90
-BUBBLE_WIDTH = 2
-MIN_CHILDREN = 50
-MAX_CHILDREN = 200
+BUBBLE_WIDTH = 1
+MIN_CHILDREN = 20
+MAX_CHILDREN = 50
 
 INITIAL_SPEED = 5
 OUTWARD_DECELERATION = .05
@@ -31,6 +31,7 @@ class Bubble():
         self.x, self.y = pygame.mouse.get_pos()
         
         self.popped = False
+        self.popped_twice = False
     
     def move(self):
         self.x, self.y = pygame.mouse.get_pos()
@@ -39,10 +40,10 @@ class Bubble():
         if self.radius > 0:
             pygame.draw.circle(surface, self.color, (self.x, self.y), int(self.radius), self.width) 
     
-    def pop(self):
-        if self.popped:
+    def pop_it(self, children):
+        if self.popped and self.popped_twice:
             return
-        else:
+        elif not self.popped:
             self.popped = True
             children = []
             number_of_children = r.randint(MIN_CHILDREN, MAX_CHILDREN + 1)
@@ -55,6 +56,20 @@ class Bubble():
                 children.append(child)
             self.radius = 0
             return children
+            
+        elif self.popped and not self.popped_twice:
+            self.popped_twice = True
+            sub_children = []
+            number_of_children = r.randint(MIN_CHILDREN, MAX_CHILDREN + 1)
+            
+            sub_child_radius = ((area(children[0].radius) / number_of_children) / math.pi) ** (1/2)
+            
+            for child in children:
+                for i in range(number_of_children):
+                    sub_child_direction = 360 / number_of_children * i
+                    sub_child = ChildBubble(child.x, child.y, sub_child_radius, sub_child_direction)
+                    sub_children.append(sub_child)
+            return sub_children
 
 
 class ChildBubble():
@@ -135,11 +150,12 @@ def run_game():
         children = [child for child in children if child.radius > 0]
         if children == []:
             bubble.popped = False
+            bubble.popped_twice = False
         
         # Watch for keyboard and mouse events.
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not bubble.popped:
-                children = bubble.pop()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not bubble.popped_twice:
+                children = bubble.pop_it(children)
             if event.type == pygame.QUIT:
                running = False
         
