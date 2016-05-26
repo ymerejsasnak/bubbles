@@ -2,13 +2,11 @@ import pygame
 import math
 import random as r
 
-# IDEA: make it so child bubbles can be popped once too?  (how hard will this be?)
-
 
 BG_COLOR = (150, 150, 200)
-BUBBLE_COLOR = (50, 50, 255)
+BUBBLE_COLOR = (50, 50, 60)
 BUBBLE_RADIUS = 90
-BUBBLE_WIDTH = 1
+BUBBLE_WIDTH = 0
 MIN_CHILDREN = 20
 MAX_CHILDREN = 50
 
@@ -75,7 +73,7 @@ class Bubble():
 class ChildBubble():
     
     def __init__(self, x, y, radius, direction):
-        self.color = BUBBLE_COLOR
+        self.color = (r.randint(10,100), r.randint(10,100), r.randint(10,100))
         self.radius = radius
         self.width = BUBBLE_WIDTH
         self.x = x
