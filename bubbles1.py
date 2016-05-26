@@ -2,18 +2,24 @@ import pygame
 import math
 import random as r
 
+# IDEA: make it so child bubbles can be popped once too?  (how hard will this be?)
+
 
 BG_COLOR = (150, 150, 200)
 BUBBLE_COLOR = (50, 50, 255)
 BUBBLE_RADIUS = 90
 BUBBLE_WIDTH = 2
-MIN_CHILDREN = 10
-MAX_CHILDREN = 30
+MIN_CHILDREN = 50
+MAX_CHILDREN = 200
 
 INITIAL_SPEED = 5
 OUTWARD_DECELERATION = .05
 INWARD_ACCELERATION = .05
 
+
+def area(r):
+    return math.pi * r ** 2
+    
 
 class Bubble():
     
@@ -40,8 +46,10 @@ class Bubble():
             self.popped = True
             children = []
             number_of_children = r.randint(MIN_CHILDREN, MAX_CHILDREN + 1)
+            
+            child_radius = ((area(self.radius) / number_of_children) / math.pi) ** (1/2)
+            
             for i in range(number_of_children):
-                child_radius = self.radius / number_of_children
                 child_direction = 360 / number_of_children * i
                 child = ChildBubble(self.x, self.y, child_radius, child_direction)
                 children.append(child)
@@ -58,7 +66,7 @@ class ChildBubble():
         self.x = x
         self.y = y
         
-        self.speed = INITIAL_SPEED
+        self.speed = r.uniform(INITIAL_SPEED - 1, INITIAL_SPEED + 1) 
         self.direction = direction
         
         self.moving_outward = True
@@ -84,7 +92,8 @@ class ChildBubble():
             distance_from_home = ((self.x - target_x) ** 2 + (self.y - target_y) ** 2) ** 0.5
             if distance_from_home <= bubble.radius + self.radius:
                 self.home = True
-                bubble.radius += self.radius
+                new_area = area(bubble.radius) + area(self.radius)
+                bubble.radius  = (new_area / math.pi) ** 0.5
                 self.radius = 0
             
             
