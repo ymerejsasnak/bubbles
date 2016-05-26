@@ -4,9 +4,9 @@ import random as r
 
 
 BG_COLOR = (150, 150, 200)
-BUBBLE_COLOR = (50, 50, 60)
+BUBBLE_COLOR = (100, 100, 250)
 BUBBLE_RADIUS = 90
-BUBBLE_WIDTH = 0
+BUBBLE_WIDTH = 1
 MIN_CHILDREN = 20
 MAX_CHILDREN = 50
 
@@ -73,7 +73,7 @@ class Bubble():
 class ChildBubble():
     
     def __init__(self, x, y, radius, direction):
-        self.color = (r.randint(10,100), r.randint(10,100), r.randint(10,100))
+        self.color = BUBBLE_COLOR
         self.radius = radius
         self.width = BUBBLE_WIDTH
         self.x = x
